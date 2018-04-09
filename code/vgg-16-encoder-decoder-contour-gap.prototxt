@@ -1,11 +1,29 @@
 name: 'VGG-16-CEDN-Contour-Gilbert'
 
-input: 'data'
-input_dim: 8
-input_dim: 3
-input_dim: 256
-input_dim: 256
-
+layers {
+  name: "data"
+  type: DATA
+  top: "data"
+  top: "label"
+  data_param {
+    source: "data/gilbert/train_lmdb"
+    batch_size: 5
+    backend: LMDB
+  }
+  include: { phase: TRAIN }
+}
+layers {
+  name: "data"
+  type: DATA
+  top: "data"
+  top: "label"
+  data_param {
+    source: "data/gilbert/train_lmdb"
+    batch_size: 1
+    backend: LMDB
+  }
+  include: { phase: TEST }
+}
 layers { bottom: 'data' top: 'conv1_1' name: 'conv1_1' type: CONVOLUTION
   blobs_lr: 0 blobs_lr: 0 weight_decay: 1 weight_decay: 0
   convolution_param { engine: CAFFE num_output: 64 pad: 1 kernel_size: 3 } }
