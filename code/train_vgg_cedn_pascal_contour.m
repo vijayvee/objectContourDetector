@@ -38,7 +38,7 @@ for iter = 1 : 30
     for k = 1:8, contours(:,:,:,k) = imgradient(masks(:,:,:,k))>0; end
     contours = permute(contours,[2,1,3,4]);
 
-    output = caffe('forward', {ims});  
+    output = caffe('forward', {ims});
 
     penalties = single(contours); penalties(contours==0) = 0.1; penalties = 10*penalties;
     [loss_contour, delta_contour] = loss_crossentropy_paired_sigmoid_grad(output{1}, contours, penalties);
@@ -53,7 +53,7 @@ for iter = 1 : 30
   loss_train = loss_train / length(imnames);
   fprintf('Iter %d: training error is %f with contour in %f seconds.\n', iter, error_train_contour, toc);
   fprintf(fid, '%d %f\n', iter, error_train_contour);
-  if mod(iter,5)==0, 
+  if mod(iter,5)==0,
     weights = caffe('get_weights');
     save(sprintf('../results/PASCAL/%s-w10_model_iter%03d.mat', model_specs, iter), 'weights');
   end

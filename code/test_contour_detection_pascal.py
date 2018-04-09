@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # --------------------------------------------------------
-# Convolutional Encoder-Decoder Networks for Contour Detection 
+# Convolutional Encoder-Decoder Networks for Contour Detection
 # Copyright (c) 2015 Microsoft
 # Licensed under The MIT License [see LICENSE for details]
 # Written by Ross Girshick
@@ -53,9 +53,9 @@ def _get_image_blob(im):
                         interpolation=cv2.INTER_LINEAR)
 
     # Pad the image to the standard size (optional)
-    top = (TEST_MAX_SIZE - im_shape[0]) / 2 
+    top = (TEST_MAX_SIZE - im_shape[0]) / 2
     bottom = TEST_MAX_SIZE - im_shape[0] - top
-    left = (TEST_MAX_SIZE - im_shape[1]) / 2 
+    left = (TEST_MAX_SIZE - im_shape[1]) / 2
     right = TEST_MAX_SIZE - im_shape[1] - left
     im_pad = (top, bottom, left, right)
     im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT, 0)
@@ -72,8 +72,8 @@ def _get_image_blob(im):
 
 def _get_contour_map(probmap, im_shape, im_pad):
     """Convert network output to contour maps."""
-     
-    probmap = np.squeeze(probmap) 
+
+    probmap = np.squeeze(probmap)
 
     top = im_pad[0]
     bottom = im_pad[1]
@@ -83,7 +83,7 @@ def _get_contour_map(probmap, im_shape, im_pad):
 
     height = im_shape[0]
     width = im_shape[1]
-    probmap = cv2.resize(probmap, (im_shape[1], im_shape[0])) 
+    probmap = cv2.resize(probmap, (im_shape[1], im_shape[0]))
 
     return probmap
 
@@ -96,19 +96,19 @@ def contour_detection(net, im):
 
     # Convert image to network blobs
     blobs = {'data': None}
-    blobs['data'], im_shape, im_pad = _get_image_blob(im) 
+    blobs['data'], im_shape, im_pad = _get_image_blob(im)
     # Reshape network inputs
 #    net.blobs['data'].reshape(*(blobs['data'].shape))
     # Run forward inference
     blobs_out = net.forward(data=blobs['data'].astype(np.float32, copy=False))
-    probmap = blobs_out['probmap']    
+    probmap = blobs_out['probmap']
     # Convert network output to image
-    probmap = _get_contour_map(probmap, im_shape, im_pad) 
+    probmap = _get_contour_map(probmap, im_shape, im_pad)
 
     timer.toc()
     print ('Detection took {:.3f}s').format(timer.total_time)
-    
-    return probmap    
+
+    return probmap
 
 def parse_args():
     """Parse input arguments."""
@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
     list_file = os.path.join(ROOT_DIR, '../data/PASCAL', 'val.txt')
     f = open(list_file, 'r')
-    imnames = f.readlines()    
+    imnames = f.readlines()
     for name in imnames:
     	print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
     	print 'Infer for {}'.format(name)
@@ -163,4 +163,3 @@ if __name__ == '__main__':
         # Save detections
         res_file = os.path.join(ROOT_DIR, '../results/PASCAL', name + '.png')
 	cv2.imwrite(res_file, (255*probmap).astype(np.uint8, copy=True))
-
