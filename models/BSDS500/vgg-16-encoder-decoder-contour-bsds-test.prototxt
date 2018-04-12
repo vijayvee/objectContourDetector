@@ -1,4 +1,4 @@
-name: 'VGG-16-CEDN-Contour'
+name: 'VGG-16-CEDN-Contour-BSDS'
 
 input: 'data'
 input_dim: 1

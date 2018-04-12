@@ -11,6 +11,9 @@
 See README.md for installation instructions before running.
 """
 
+import sys
+sys.path.append('/home/drew/objectContourDetector/caffe-cedn/python')
+import os
 import _init_paths
 from utils.timer import Timer
 import numpy as np
@@ -26,7 +29,8 @@ TEST_MAX_SIZE = 512
 
 ROOT_DIR = '../'
 
-NETS = {'pascal': ('PASCAL', 'vgg-16-encoder-decoder-contour-w10-pascal', 'iter030')}
+NETS = {'pascal': ('PASCAL', 'vgg-16-encoder-decoder-contour-w10-pascal', 'iter030'),
+        'BSDS500': ('BSDS500','vgg-16-encoder-decoder-contour-bsds', 'iter_32610')}
 
 def _sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -128,14 +132,13 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    prototxt = os.path.join(ROOT_DIR, 'models', 'PASCAL',
+    prototxt = os.path.join(ROOT_DIR, 'models', 'BSDS500',
                             '{:s}-test.prototxt'.format(NETS[args.infer_net][1]))
-    caffemodel = os.path.join(ROOT_DIR, 'models', 'PASCAL',
-                              '{:s}-{:s}.caffemodel'.format(NETS[args.infer_net][1], NETS[args.infer_net][2]))
+    caffemodel = os.path.join(ROOT_DIR, 'models', 'BSDS500',
+                              '{:s}_{:s}.caffemodel'.format(NETS[args.infer_net][1], NETS[args.infer_net][2]))
 
     if not os.path.isfile(caffemodel):
         raise IOError(('{:s} not found.\n').format(caffemodel))
-
     net = caffe.Net(prototxt, caffemodel)
     net.set_phase_test()
     print 'Net is initialized.\n'
@@ -148,7 +151,7 @@ if __name__ == '__main__':
 
     print '\n\nLoaded network {:s}'.format(caffemodel)
 
-    list_file = os.path.join(ROOT_DIR, '../data/PASCAL', 'val.txt')
+    list_file = os.path.join(ROOT_DIR, 'data/BSDS500/data/images', 'test.txt')
     f = open(list_file, 'r')
     imnames = f.readlines()
     for name in imnames:
@@ -156,10 +159,12 @@ if __name__ == '__main__':
     	print 'Infer for {}'.format(name)
         # Load the test image
         name = name[:-1]
-        im_file = os.path.join(ROOT_DIR, '../data/PASCAL', 'JPEGImages', name + '.jpg')
+        #im_file = os.path.join(ROOT_DIR, '../data/PASCAL', 'JPEGImages', name + '.jpg')
+        #BSDS testing
+        im_file = os.path.join(ROOT_DIR, 'data/BSDS500/data/images', 'test', name + '.jpg')
         im = cv2.imread(im_file)
 	# Run CEDN inference
     	probmap = contour_detection(net, im)
         # Save detections
-        res_file = os.path.join(ROOT_DIR, '../results/PASCAL', name + '.png')
+        res_file = os.path.join(ROOT_DIR, 'results/BSDS500', name + '.png')
 	cv2.imwrite(res_file, (255*probmap).astype(np.uint8, copy=True))

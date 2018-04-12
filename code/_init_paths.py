@@ -15,6 +15,6 @@ def add_path(path):
         sys.path.insert(0, path)
 
 # Add caffe to PYTHONPATH
-caffe_path = osp.join('../caffe-cedn', 'python')
+caffe_path = osp.join('/home/drew/objectContourDetector/caffe-cedn', 'python')
 print caffe_path
 add_path(caffe_path)

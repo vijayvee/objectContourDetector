@@ -1,10 +1,10 @@
-name: 'VGG-16-CEDN-Contour'
+name: 'VGG-16-CEDN-Contour-BSDS'
 
 input: 'data'
-input_dim: 1
+input_dim: 8
 input_dim: 3
-input_dim: 512
-input_dim: 512
+input_dim: 224
+input_dim: 224
 
 layers { bottom: 'data' top: 'conv1_1' name: 'conv1_1' type: CONVOLUTION
   blobs_lr: 0 blobs_lr: 0 weight_decay: 1 weight_decay: 0
@@ -128,5 +128,5 @@ layers { bottom: 'deconv1' top: 'deconv1' name: 'drop13' type: DROPOUT
   dropout_param { dropout_ratio: 0.5 } }
 layers { bottom: 'deconv1' top: 'pred1-contour' name: 'pred1-contour' type: CONVOLUTION
   blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
-  convolution_param { kernel_size: 5 pad: 2 num_output: 1 weight_filler { type: 'xavier' } bias_filler { type: 'constant' } } }
-layers { bottom: 'pred1-contour' top: 'probmap' name: 'probmap' type: SIGMOID }
+  convolution_param { kernel_size: 5 pad: 2 num_output: 1 weight_filler { type: 'xavier' } bias_filler { type: 'constant' } }
+  loss_weight: 1 }

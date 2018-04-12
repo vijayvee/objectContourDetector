@@ -1,10 +1,10 @@
 % train semantic segmentation with vggnet fcn
 addpath(genpath('/home/drew/objectContourDetector/caffe-cedn/matlab'));
-model_specs = sprintf('vgg-16-encoder-decoder-%s', 'contour');
+model_specs = sprintf('vgg-16-encoder-decoder-%s', 'contour-bsds');
 use_gpu = true;
 model_file = sprintf('%s.prototxt', model_specs);
 solver_file = sprintf('%s_solver.prototxt', model_specs);
-param = struct('base_lr', 0.00001, 'lr_policy', 'fixed', 'weight_decay', 0.001, 'solver_type', 3, 'snapshot_prefix', sprintf('../models/PASCAL/%s',model_specs));
+param = struct('base_lr', 0.00001, 'lr_policy', 'fixed', 'weight_decay', 0.001, 'solver_type', 3, 'snapshot_prefix', sprintf('../models/BSDS500/%s',model_specs));
 make_solver_file(solver_file, model_file, param);
 mean_pix = [103.939, 116.779, 123.68];
 matcaffe_fcn_vgg_init(use_gpu, solver_file, 0);
@@ -14,12 +14,12 @@ for i=1:14, weights0(i).weights = vggnet.model(i).weights; end
 caffe('set_weights', weights0);
 caffe('set_phase_train');
 
-imnames = textread('../data/PASCAL/train.txt', '%s');
+imnames = textread('../data/BSDS500/data/images/train.txt', '%s');
 length(imnames)
 
 H = 224; W = 224;
 
-fid = fopen(sprintf('../results/PASCAL/%s-w10-train-errors.txt', model_specs),'w');
+fid = fopen(sprintf('../results/BSDS500/%s-w10-train-errors.txt', model_specs),'w');
 for iter = 1 : 30
   tic
   loss_train = 0;
@@ -28,8 +28,8 @@ for iter = 1 : 30
   rnd_idx = randperm(length(imnames));
   for i = 1:length(imnames),
     name = imnames{rnd_idx(i)};
-    im = imread(['../data/PASCAL/JPEGImages/' name '.jpg']);
-    [mask] = imread(['../data/PASCAL/SegmentationObjectFilledDenseCRF/' name '.png']);
+    im = imread(['../data/BSDS500/data/images/train/' name '.jpg']);
+    [mask] = imread(['../data/BSDS500/data/groundTruth/train/' name '.png']);
     [ims, masks] = sample_image(im, mask);
     ims = ims(:,:,[3,2,1],:);
     for c = 1:3, ims(:,:,c,:) = ims(:,:,c,:) - mean_pix(c); end
@@ -58,7 +58,7 @@ for iter = 1 : 30
   fprintf(fid, '%d %f\n', iter, error_train_contour);
   if mod(iter,5)==0,
     weights = caffe('get_weights');
-    save(sprintf('../results/PASCAL/%s-w10_model_iter%03d.mat', model_specs, iter), 'weights');
+    save(sprintf('../results/BSDS500/%s-w10_model_iter%03d.mat', model_specs, iter), 'weights');
   end
 end
 fclose(fid);
