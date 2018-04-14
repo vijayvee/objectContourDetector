@@ -4,7 +4,7 @@ function [loss, delta] = loss_crossentropy_paired_softmax_grad(pred, output, pen
 maxpred = max(pred,[],3);
 pred = pred - repmat(maxpred,[1,1,c,1]);
 
-act = exp(pred); 
+act = exp(pred);
 act = act ./ repmat(sum(act,3),[1,1,c,1]);
 
 if nargin > 2,
@@ -13,6 +13,6 @@ if nargin > 2,
     delta = (act - output).*penalty;
 else
     loss = -log(act).*output;
-    loss = sum(loss(:));
+    loss = sum(loss(:)./n);
     delta = act - output;
 end

@@ -35,3 +35,4 @@ for i = indices_y
     curr = curr + 1;
   end
 end
+images = images/255.;

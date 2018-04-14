@@ -132,10 +132,16 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    prototxt = os.path.join(ROOT_DIR, 'models', 'PASCAL',
-                            '{:s}-test.prototxt'.format(NETS[args.infer_net][1]))
+#    prototxt = os.path.join(ROOT_DIR, 'models', 'BSDS500',
+#                            '{:s}-test.prototxt'.format(NETS[args.infer_net][1]))
+#    caffemodel = os.path.join(ROOT_DIR, 'models', 'BSDS500',
+#                              '{:s}_{:s}.caffemodel'.format(NETS[args.infer_net][1], NETS[args.infer_net][2]))
+
     caffemodel = os.path.join(ROOT_DIR, 'models', 'PASCAL',
-                              '{:s}_{:s}.caffemodel'.format(NETS[args.infer_net][1], NETS[args.infer_net][2]))
+                              'vgg-16-encoder-decoder-contour-w10-pascal-iter030.caffemodel')
+    prototxt = os.path.join(ROOT_DIR, 'models', 'PASCAL',
+                            'vgg-16-encoder-decoder-contour-test.prototxt')
+
     if not os.path.isfile(caffemodel):
         raise IOError(('{:s} not found.\n').format(caffemodel))
     net = caffe.Net(prototxt, caffemodel)
@@ -150,7 +156,7 @@ if __name__ == '__main__':
 
     print '\n\nLoaded network {:s}'.format(caffemodel)
 
-    list_file = os.path.join(ROOT_DIR, 'data/PASCAL', 'val.txt')
+    list_file = os.path.join(ROOT_DIR, 'data/BSDS500/data/images', 'test.txt')
     f = open(list_file, 'r')
     imnames = f.readlines()
     for name in imnames:
@@ -158,12 +164,12 @@ if __name__ == '__main__':
     	print 'Infer for {}'.format(name)
         # Load the test image
         name = name[:-1]
-        im_file = os.path.join(ROOT_DIR, '../data/PASCAL', 'JPEGImages', name + '.jpg')
+        #im_file = os.path.join(ROOT_DIR, '../data/PASCAL', 'JPEGImages', name + '.jpg')
         #BSDS testing
-#        im_file = os.path.join(ROOT_DIR, 'data/', 'test', name + '.jpg')
+        im_file = os.path.join(ROOT_DIR, 'data/BSDS500/data/images', 'test', name + '.jpg')
         im = cv2.imread(im_file)
 	# Run CEDN inference
     	probmap = contour_detection(net, im)
         # Save detections
-        res_file = os.path.join(ROOT_DIR, 'results/PASCAL', name + '.png')
+        res_file = os.path.join(ROOT_DIR, 'results/BSDS500_Hlee', name + '.png')
 	cv2.imwrite(res_file, (255*probmap).astype(np.uint8, copy=True))
