@@ -151,4 +151,25 @@ layers { bottom: 'pred1-contour' top: 'conv_readout' name: 'conv_readout' type: 
   convolution_param { kernel_size: 1 pad: 0 num_output: 2 weight_filler { type: 'xavier' } bias_filler { type: 'constant' } }
   }
 layers { bottom: 'conv_readout' top: 'readout' name: 'readout' type: POOLING
-  pooling_param { pool: AVE kernel_size: 224 stride: 224 } loss_weight: 1}
+  pooling_param { pool: AVE kernel_size: 224 stride: 224 } }
+layers {
+  name: 'fully_connected'
+  type: INNER_PRODUCT
+  # learning rate and decay multipliers for the weights
+  blobs_lr:1
+  blobs_lr:2
+  weight_decay:1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: 'xavier'
+    }
+    bias_filler {
+      type: 'constant'
+    }
+  }
+  bottom: 'readout'
+  top: 'fully_connected'
+  loss_weight: 1
+}

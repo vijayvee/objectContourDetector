@@ -42,7 +42,7 @@ for iter = 1 : 10
     label = reshape(label,[1,1,2,8]);
     [ims, masks] = sample_image(image, mask);
     ims = ims(:,:,[3,2,1],:);
-    %%for c = 1:3, ims(:,:,c,:) = ims(:,:,c,:) - mean_pix(c); end
+    %% for c = 1:3, ims(:,:,c,:) = ims(:,:,c,:) - mean_pix(c); end
     ims = permute(ims,[2,1,3,4]);
     output = caffe('forward', {ims});
     [h,w,c,n] = size(ims);
