@@ -17,8 +17,8 @@ end
 end
 
 % oversample (4 corners, center, and their x-axis flips)
-images = zeros(CROPPED_DIM, CROPPED_DIM, 3, 8, 'single');
-masks = zeros(CROPPED_DIM, CROPPED_DIM, 1, 8, 'single');
+images = zeros(CROPPED_DIM, CROPPED_DIM, 3, 16, 'single');
+masks = zeros(CROPPED_DIM, CROPPED_DIM, 1, 16, 'single');
 
 indices_y = [0:size(im,1)-CROPPED_DIM] + 1;
 indices_y = randSample(indices_y, 2);
@@ -30,8 +30,10 @@ for i = indices_y
   for j = indices_x
     images(:, :, :, curr) = im(i:i+CROPPED_DIM-1, j:j+CROPPED_DIM-1, :);
     images(:, :, :, curr+4) = images(end:-1:1, :, :, curr);
-    masks(:, :, :, curr) = mask(i:i+CROPPED_DIM-1, j:j+CROPPED_DIM-1, :);
-    masks(:, :, :, curr+4) = masks(end:-1:1, :, :, curr);
+    images(:, :, :, curr+8) = im(i:i+CROPPED_DIM-1, j:j+CROPPED_DIM-1, :);
+    images(:, :, :, curr+12) = images(end:-1:1, :, :, curr);
+    %% masks(:, :, :, curr) = mask(i:i+CROPPED_DIM-1, j:j+CROPPED_DIM-1, :);
+    %% masks(:, :, :, curr+4) = masks(end:-1:1, :, :, curr);
     curr = curr + 1;
   end
 end

@@ -18,7 +18,7 @@ imnames = textread('../data/GILBERT/train.txt', '%s');
 length(imnames)
 
 H = 224; W = 224;
-
+batch_size = 16;
 fid = fopen(sprintf('../results/GILBERT/%s-w10-train-errors.txt', model_specs),'w');
 for iter = 1 : 10
   tic
@@ -32,14 +32,14 @@ for iter = 1 : 10
     im = imread(['../data/GILBERT/all_images/' name '.png']);
     for ind=1:3, image(:,:,ind) = im; end
     mask = zeros(size(im), 'single');
-    label = zeros([2,8]);
+    label = zeros([2,batch_size]);
     label_neg = label; label_neg(1,:) = label_neg(1,:) + 1;
     label_pos = label; label_pos(2,:) = label_pos(2,:) + 1;
     label = label_pos;
     if strcmp(name(1:3), 'neg'),
       label = label_neg;
     end
-    label = reshape(label,[1,1,2,8]);
+    label = reshape(label,[1,1,2,batch_size]);
     [ims, masks] = sample_image(image, mask);
     ims = ims(:,:,[3,2,1],:);
     %% for c = 1:3, ims(:,:,c,:) = ims(:,:,c,:) - mean_pix(c); end
@@ -51,7 +51,7 @@ for iter = 1 : 10
     if i == 1,
       fprintf("Loss: %d\n", loss_contour);
     end
-    delta_contour = reshape(single(delta_contour),[2,1,1,8]);
+    delta_contour = reshape(single(delta_contour),[2,1,1,batch_size]);
     caffe('backward', {delta_contour});
     caffe('update');
     loss_train = loss_train + loss_contour;
