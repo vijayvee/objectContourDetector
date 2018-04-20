@@ -30,7 +30,7 @@ TEST_MAX_SIZE = 512
 ROOT_DIR = '../'
 
 NETS = {'pascal': ('PASCAL', 'vgg-16-encoder-decoder-contour-w10-pascal', 'iter030'),
-        'BSDS500': ('BSDS500','vgg-16-encoder-decoder-contour-bsds', 'iter_32610')}
+        'BSDS500': ('BSDS500','vgg-16-encoder-decoder-contour-bsds-w10-bsds', 'iter_100')}
 
 def _sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -138,7 +138,7 @@ if __name__ == '__main__':
 #                              '{:s}_{:s}.caffemodel'.format(NETS[args.infer_net][1], NETS[args.infer_net][2]))
 
     caffemodel = os.path.join(ROOT_DIR, 'models', 'PASCAL',
-                              'vgg-16-encoder-decoder-contour-w10-pascal-iter030.caffemodel')
+                              'vgg-16-encoder-decoder-contour-w10-bsds-iter100.caffemodel')
     prototxt = os.path.join(ROOT_DIR, 'models', 'PASCAL',
                             'vgg-16-encoder-decoder-contour-test.prototxt')
 
@@ -170,6 +170,7 @@ if __name__ == '__main__':
         im = cv2.imread(im_file)
 	# Run CEDN inference
     	probmap = contour_detection(net, im)
+        import ipdb; ipdb.set_trace()
         # Save detections
-        res_file = os.path.join(ROOT_DIR, 'results/BSDS500_Hlee', name + '.png')
+        res_file = os.path.join(ROOT_DIR, 'results/BSDS500_Hlee_FineTuned', name + '.png')
 	cv2.imwrite(res_file, (255*probmap).astype(np.uint8, copy=True))
