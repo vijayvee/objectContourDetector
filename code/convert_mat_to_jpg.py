@@ -41,7 +41,7 @@ def saveBoundary(mat, fileName):
     imgFnNoExt = imgFn.split('.jpg')[0]
     img = imread(imgFn)
     for annot in range(nAnnots):
-        bound = mat['groundTruth'][0][annot][0][0][0]
+        bound = mat['groundTruth'][0][annot][0][0][1]
         img, bound = forcePortrait(img, bound)
         imsave('%s_%s.png'%(fileNoExt, annot), bound)
         imsave('%s_%s.jpg'%(imgFnNoExt, annot), img)
